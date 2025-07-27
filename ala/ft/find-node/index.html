@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GoJS Nested Node Ctrl+Click Selection</title>
+    <script src="https://unpkg.com/gojs@2.3.11/release/go.js"></script>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; }
+        #myDiagramDiv {
+            width: 100vw;
+            height: 90vh;
+            background-color: #DAE4E4; /* 배경색을 넣어 div 영역 확인 */
+        }
+        #contextMenu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            padding: 5px;
+            z-index: 100;
+        }
+        #contextMenu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #contextMenu li {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #contextMenu li:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="myDiagramDiv"></div>
+    <div id="contextMenu">
+        <ul id="contextMenuList"></ul>
+    </div>
+
+    <script>
+        const $ = go.GraphObject.make;
+        let myDiagram = null;
+        let contextMenu = document.getElementById("contextMenu");
+        let contextMenuList = document.getElementById("contextMenuList");
+
+        // init 함수는 DOMContentLoaded 이후에 호출됩니다.
+        function init() {
+            console.log("init() function called!"); // init 함수 호출 확인
+
+            myDiagram = $(go.Diagram, "myDiagramDiv", {
+                "undoManager.isEnabled": true,
+                "toolManager.hoverDelay": 100,
+                // "clickSelectingTool.canStart": null, // 이 줄은 제거하거나 "clickSelectingTool.isEnabled": false 로 변경해야 함
+                "initialContentAlignment": go.Spot.Center,
+                "layout": $(go.GridLayout, { sorting: go.GridLayout.Forward }),
+                // ObjectSingleClicked 이벤트 리스너 등록
+                "ObjectSingleClicked": (e) => {
+                    handleCustomClick(e.diagram.lastInput);
+                }
+            });
+
+            // myDiagram.toolManager.clickSelectingTool.mouseDown = function(e, obj) {
+            //     console.log(e);
+            //     handleCustomClick(e);
+            // }
+
+            // 노드 템플릿 정의
+            myDiagram.nodeTemplate =
+                $(go.Node, "Auto",
+                    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                    $(go.Shape, "RoundedRectangle",
+                        { strokeWidth: 2, fill: "white" },
+                        new go.Binding("fill", "color")),
+                    $(go.TextBlock,
+                        { margin: 8 },
+                        new go.Binding("text", "key"))
+                );
+
+            // 그룹 템플릿 정의
+            myDiagram.groupTemplate =
+                $(go.Group, "Vertical",
+                    {
+                        selectionObjectName: "PH",
+                        movable: true,
+                        selectable: true, // 그룹이 선택 가능하도록 설정
+                        resizable: false,
+                        rotatable: false,
+                        resizeObjectName: "PH",
+                    },
+                    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                    $(go.Panel, "Auto",
+                        { name: "PH" },
+                        $(go.Shape, "RoundedRectangle",
+                            { fill: "lightgreen", stroke: "green", strokeWidth: 2, portId: "" }),
+                        $(go.Panel, "Vertical",
+                            { defaultStretch: go.GraphObject.Horizontal, margin: 8 },
+                            $(go.TextBlock,
+                                {
+                                    font: "bold 14pt sans-serif",
+                                    isMultiline: false,
+                                    maxLines: 1,
+                                    alignment: go.Spot.Left
+                                },
+                                new go.Binding("text", "key")),
+                            $(go.Placeholder,
+                                { padding: 5, alignment: go.Spot.TopLeft })
+                        )
+                    )
+                );
+
+            // 모델 데이터 설정
+            myDiagram.model = new go.GraphLinksModel(
+                [
+                    { key: "Group A", isGroup: true, loc: "0 0" },
+                    { key: "Group B", isGroup: true, loc: "200 0" },
+                    { key: "Node 1", group: "Group A", loc: "20 20", color: "lightblue" },
+                    { key: "Node 2", group: "Group A", loc: "20 80", color: "lightblue" },
+                    { key: "Node 3", group: "Group B", loc: "220 20", color: "lightcoral" },
+                    { key: "Node 4", loc: "400 0", color: "lightgray" }
+                ],
+                []
+            );
+
+            // 다이어그램 이벤트 리스너 추가 (myDiagram이 생성된 후에만 가능)
+            myDiagram.addDiagramListener("BackgroundSingleClicked", hideContextMenu);
+            myDiagram.addDiagramListener("ChangedSelection", hideContextMenu);
+        }
+
+        // handleCustomClick 함수 정의
+        function handleCustomClick(e) {
+            hideContextMenu();
+
+            // if (e.control) {
+                const clickedPoint = e.documentPoint;
+                const foundParts = myDiagram.findPartsAt(clickedPoint, {
+                    include: go.Part.isNode,
+                }).toArray();
+                console.log("Found parts at click point:", foundParts.length, foundParts);
+
+                const selectableParts = foundParts.filter(p => p.canSelect());
+                console.log("Selectable parts found:", selectableParts.length, selectableParts);
+
+                if (selectableParts.length === 1) {
+                    console.log("Selecting single part:", selectableParts[0].key);
+                    myDiagram.select(selectableParts[0]);
+                } else if (selectableParts.length > 1) {
+                    console.log("Showing selection popup for multiple parts.");
+                    showSelectionPopup(selectableParts, e.diagram.transformDocToView(clickedPoint));
+                }
+            // } else {
+            //     console.log("Ctrl not pressed. Default selection behavior.");
+            //     const obj = e.pickObject;
+            //     if (obj && obj.part && obj.part.canSelect()) {
+            //         myDiagram.select(obj.part);
+            //     } else {
+            //         myDiagram.clearSelection();
+            //     }
+            // }
+        }
+
+        // showSelectionPopup 함수 정의
+        function showSelectionPopup(parts, screenPoint) {
+            console.log("showSelectionPopup() called.");
+            contextMenuList.innerHTML = "";
+
+            parts.forEach(part => {
+                const li = document.createElement("li");
+                li.textContent = `Select: ${part.key} (${part.isGroup ? "Group" : "Node"})`;
+                li.onclick = () => {
+                    myDiagram.select(part);
+                    hideContextMenu();
+                };
+                contextMenuList.appendChild(li);
+            });
+
+            contextMenu.style.left = screenPoint.x + "px";
+            contextMenu.style.top = screenPoint.y + "px";
+            contextMenu.style.display = "block";
+        }
+
+        // hideContextMenu 함수 정의
+        function hideContextMenu() {
+            if (contextMenu.style.display === "block") {
+                console.log("hideContextMenu() called.");
+                contextMenu.style.display = "none";
+            }
+        }
+
+        // DOMContentLoaded 이벤트 발생 시 init 함수 호출
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

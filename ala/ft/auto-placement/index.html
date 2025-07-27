@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoJS 노드 드래그 연속 복사</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gojs/3.0.2/go.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #myDiagramDiv {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            background-color: #f5f5f5;
+        }
+        .info {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+        }
+        .keyboard-info {
+            background-color: #fff3cd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="keyboard-info">
+        <strong>사용법:</strong> 
+        <br>• 일반 드래그: 노드 이동
+        <br>• Shift + 드래그: 노드 연속 복사
+    </div>
+    <div class="info">
+        드래그 방향에 따라 수평/수직이 자동으로 결정되며, 생성될 노드들이 미리보기로 표시됩니다.
+    </div>
+    <div id="myDiagramDiv"></div>
+
+    <script>
+        const $ = go.GraphObject.make;
+
+        // 다이어그램 초기화
+        const myDiagram = $(go.Diagram, "myDiagramDiv", {
+            "undoManager.isEnabled": true,
+            "grid.visible": true,
+            "grid.gridCellSize": new go.Size(10, 10),
+            "draggingTool.isGridSnapEnabled": true,
+            "resizingTool.isGridSnapEnabled": true
+        });
+
+        // 노드 템플릿 정의
+        myDiagram.nodeTemplate = $(go.Node, "Auto",
+            {
+                resizable: true,
+                resizeObjectName: "SHAPE",
+                width: 100,
+                height: 60
+            },
+            $(go.Shape, "RoundedRectangle",
+                {
+                    name: "SHAPE",
+                    fill: "lightblue",
+                    strokeWidth: 2,
+                    stroke: "#4472C4"
+                },
+                new go.Binding("fill", "color")
+            ),
+            $(go.TextBlock,
+                {
+                    margin: 8,
+                    font: "14px sans-serif"
+                },
+                new go.Binding("text", "text")
+            )
+        );
+
+        // 미리보기 노드 템플릿 (별도 카테고리)
+        myDiagram.nodeTemplateMap.add("preview",
+            $(go.Node, "Auto",
+                {
+                    width: 100,
+                    height: 60,
+                    layerName: "Foreground"  // 앞쪽 레이어에 표시
+                },
+                $(go.Shape, "RoundedRectangle",
+                    {
+                        fill: "lightgray",
+                        strokeWidth: 2,
+                        stroke: "#999",
+                        strokeDashArray: [5, 5],  // 점선으로 표시
+                        opacity: 0.7
+                    }
+                ),
+                $(go.TextBlock,
+                    {
+                        margin: 8,
+                        font: "14px sans-serif",
+                        stroke: "#666"
+                    },
+                    new go.Binding("text", "text")
+                )
+            )
+        );
+
+        // 커스텀 드래깅 툴
+        class NodeCloningDraggingTool extends go.DraggingTool {
+            constructor() {
+                super();
+                this.originalNode = null;
+                this.dragDirection = null;
+                this._startPoint = null;
+                this.isCloning = false;
+                this.originalLocation = null;
+                this.previewNodes = [];  // 미리보기 노드들
+            }
+
+            doActivate() {
+                const shift = this.diagram.lastInput.shift;
+                
+                if (shift && this.diagram.lastInput && this.diagram.lastInput.documentPoint) {
+                    this._startPoint = this.diagram.lastInput.documentPoint.copy();
+                    const part = this.diagram.findPartAt(this._startPoint, true);
+                    
+                    if (part && part instanceof go.Node) {
+                        this.originalNode = part;
+                        this.originalLocation = part.location.copy();
+                        this.isCloning = true;
+                        this.dragDirection = null;
+                        
+                        // 원본 노드를 움직이지 않도록 draggedParts를 비움
+                        // 이 툴은 복사만 담당하므로, 기본 드래깅 툴의 draggedParts를 사용하지 않음
+                        this.draggedParts = new go.Map(); 
+                        // 또한, 원본 노드가 선택된 상태로 드래그되는 것을 방지하기 위해 선택 해제
+                        this.diagram.select(null); 
+                    }
+                }
+                
+                // Shift 키를 누르지 않았거나 노드를 찾지 못했다면 기본 드래깅 툴 활성화
+                if (!this.isCloning) {
+                    super.doActivate();
+                } else {
+                    this.startTransaction("Start Cloning Drag");
+                    this.isActive = true; // 커스텀 툴 활성화
+                }
+
+                // const shift = this.diagram.lastInput.shift;
+                
+                // if (shift && this.diagram.lastInput && this.diagram.lastInput.documentPoint) {
+                //     this._startPoint = this.diagram.lastInput.documentPoint.copy();
+                //     const part = this.diagram.findPartAt(this._startPoint, true);
+                    
+                //     if (part && part instanceof go.Node) {
+                //         this.originalNode = part;
+                //         this.originalLocation = part.location.copy();
+                //         this.isCloning = true;
+                //         this.dragDirection = null;
+                        
+                //         // 원본 노드를 움직이지 않도록 draggedParts를 비움
+                //         this.draggedParts = new go.Map();
+                //     }
+                // }
+                
+                // super.doActivate();
+            }
+
+            doMouseMove() {
+                if (!this.isActive) {
+                    super.doMouseMove();
+                    return;
+                }
+
+                if (this.isCloning && this.originalNode && this._startPoint) {
+                    const currentPoint = this.diagram.lastInput.documentPoint;
+                    const deltaX = Math.abs(currentPoint.x - this._startPoint.x);
+                    const deltaY = Math.abs(currentPoint.y - this._startPoint.y);
+
+                    // 첫 움직임에서 방향 결정
+                    if (!this.dragDirection && (deltaX > 5 || deltaY > 5)) {
+                        this.dragDirection = deltaX > deltaY ? 'horizontal' : 'vertical';
+                    }
+
+                    // 미리보기 노드 업데이트
+                    if (this.dragDirection) {
+                        this.updatePreviewNodes(currentPoint);
+                    }
+
+                    // 원본 노드가 움직이지 않도록 함
+                    this.originalNode.location = this.originalLocation;
+                    return;  // super를 호출하지 않음
+                }
+
+                super.doMouseMove();
+            }
+
+            updatePreviewNodes(currentPoint) {
+                // 기존 미리보기 노드 제거
+                this.clearPreviewNodes();
+
+                // 노드 크기 가져오기
+                let nodeWidth = 100;
+                let nodeHeight = 60;
+                
+                if (this.originalNode.width !== undefined && this.originalNode.height !== undefined) {
+                    nodeWidth = this.originalNode.width;
+                    nodeHeight = this.originalNode.height;
+                }
+
+                // 복사할 노드 위치 계산
+                let positions = [];
+
+                if (this.dragDirection === 'horizontal') {
+                    const distance = currentPoint.x - this._startPoint.x;
+                    const numCopies = Math.floor(Math.abs(distance) / nodeWidth);
+                    const direction = distance > 0 ? 1 : -1;
+                    
+                    for (let i = 1; i <= numCopies; i++) {
+                        positions.push(new go.Point(
+                            this.originalLocation.x + (i * nodeWidth * direction),
+                            this.originalLocation.y
+                        ));
+                    }
+                } else { // vertical
+                    const distance = currentPoint.y - this._startPoint.y;
+                    const numCopies = Math.floor(Math.abs(distance) / nodeHeight);
+                    const direction = distance > 0 ? 1 : -1;
+                    
+                    for (let i = 1; i <= numCopies; i++) {
+                        positions.push(new go.Point(
+                            this.originalLocation.x,
+                            this.originalLocation.y + (i * nodeHeight * direction)
+                        ));
+                    }
+                }
+
+                // 미리보기 노드 생성
+                positions.forEach((pos, index) => {
+                    const previewData = {
+                        text: this.originalNode.data.text + " Copy",
+                        category: "preview",
+                        isPreview: true  // 미리보기 표시
+                    };
+                    
+                    this.diagram.model.addNodeData(previewData);
+                    const previewNode = this.diagram.findNodeForData(previewData);
+                    if (previewNode) {
+                        previewNode.location = pos;
+                        this.previewNodes.push(previewNode);
+                    }
+                });
+            }
+
+            clearPreviewNodes() {
+                // 모든 미리보기 노드 제거
+                this.previewNodes.forEach(node => {
+                    this.diagram.remove(node);
+                });
+                this.previewNodes = [];
+            }
+
+            doMouseUp() {
+                if (!this.isActive || !this.isCloning || !this.originalNode || !this.dragDirection || !this._startPoint) {
+                    this.clearPreviewNodes();
+                    super.doMouseUp();
+                    return;
+                }
+
+                const endPoint = this.diagram.lastInput.documentPoint;
+                
+                // 노드 크기 가져오기
+                let nodeWidth = 100;
+                let nodeHeight = 60;
+                
+                if (this.originalNode.width !== undefined && this.originalNode.height !== undefined) {
+                    nodeWidth = this.originalNode.width;
+                    nodeHeight = this.originalNode.height;
+                }
+
+                // 복사할 노드 위치 계산
+                let positions = [];
+
+                if (this.dragDirection === 'horizontal') {
+                    const distance = endPoint.x - this._startPoint.x;
+                    const numCopies = Math.floor(Math.abs(distance) / nodeWidth);
+                    const direction = distance > 0 ? 1 : -1;
+                    
+                    for (let i = 1; i <= numCopies; i++) {
+                        positions.push(new go.Point(
+                            this.originalLocation.x + (i * nodeWidth * direction),
+                            this.originalLocation.y
+                        ));
+                    }
+                } else { // vertical
+                    const distance = endPoint.y - this._startPoint.y;
+                    const numCopies = Math.floor(Math.abs(distance) / nodeHeight);
+                    const direction = distance > 0 ? 1 : -1;
+                    
+                    for (let i = 1; i <= numCopies; i++) {
+                        positions.push(new go.Point(
+                            this.originalLocation.x,
+                            this.originalLocation.y + (i * nodeHeight * direction)
+                        ));
+                    }
+                }
+
+                // 미리보기 노드 제거
+                this.clearPreviewNodes();
+
+                // 실제 노드 생성
+                if (positions.length > 0) {
+                    this.diagram.startTransaction("Clone Nodes");
+                    
+                    positions.forEach((pos, index) => {
+                        const nodeData = {
+                            text: this.originalNode.data.text + " Copy",
+                            color: this.originalNode.data.color || "lightblue"
+                        };
+                        
+                        this.diagram.model.addNodeData(nodeData);
+                        const newNode = this.diagram.findNodeForData(nodeData);
+                        if (newNode) {
+                            newNode.location = pos;
+                        }
+                    });
+                    
+                    this.diagram.commitTransaction("Clone Nodes");
+                }
+
+                // 원래 노드는 원래 위치에 유지
+                this.originalNode.location = this.originalLocation;
+
+                // 리셋
+                this.reset();
+
+                super.doMouseUp();
+            }
+
+            doDeactivate() {
+                this.clearPreviewNodes();
+                if (this.isCloning && this.originalNode && this.originalLocation) {
+                    this.originalNode.location = this.originalLocation;
+                }
+                this.reset();
+                super.doDeactivate();
+            }
+
+            doCancel() {
+                this.clearPreviewNodes();
+                if (this.originalNode && this.originalLocation) {
+                    this.originalNode.location = this.originalLocation;
+                }
+                super.doCancel();
+            }
+
+            reset() {
+                this.originalNode = null;
+                this.dragDirection = null;
+                this._startPoint = null;
+                this.isCloning = false;
+                this.originalLocation = null;
+                this.previewNodes = [];
+            }
+        }
+
+        // 커스텀 드래깅 툴 설치
+        myDiagram.toolManager.draggingTool = new NodeCloningDraggingTool();
+
+        // 초기 노드 데이터
+        myDiagram.model = new go.GraphLinksModel([
+            { key: 1, text: "노드 1", color: "lightblue" },
+            { key: 2, text: "노드 2", color: "lightgreen" },
+            { key: 3, text: "노드 3", color: "lightyellow" }
+        ]);
+
+        // 노드들을 적절히 배치
+        setTimeout(() => {
+            const nodes = myDiagram.nodes;
+            let x = 100;
+            nodes.each(function(node) {
+                if (!node.data.isPreview) {  // 미리보기가 아닌 노드만
+                    node.location = new go.Point(x, 100);
+                    x += 150;
+                }
+            });
+        }, 100);
+    </script>
+</body>
+</html>
