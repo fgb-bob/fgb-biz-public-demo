@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" role="img" aria-label="日経リアルタイム — nikkeirealtime.com">
+  <title>日経リアルタイム</title>
+  <desc>Logo for nikkeirealtime.com — concept E, light-on-dark.</desc>
+
+  
+  <rect x="8" y="10" width="5" height="44" fill="#ffb020" rx="1"></rect>
+
+  
+  <text x="24" y="34" font-family="&#39;Noto Sans JP&#39;,&#39;Hiragino Sans&#39;,&#39;Hiragino Kaku Gothic ProN&#39;,&#39;Yu Gothic&#39;,&#39;Meiryo&#39;,sans-serif" font-size="28" font-weight="800" letter-spacing="0.4" fill="#ffffff">
+    <tspan>日経</tspan><tspan fill="#ffb020">・</tspan><tspan>リアルタイム</tspan>
+  </text>
+
+  
+  <text x="24" y="52" font-family="&#39;JetBrains Mono&#39;,&#39;IBM Plex Mono&#39;,ui-monospace,Menlo,monospace" font-size="10" font-weight="500" letter-spacing="2.4" fill="rgba(255,255,255,0.6)">NIKKEI REALTIME</text>
+</svg>

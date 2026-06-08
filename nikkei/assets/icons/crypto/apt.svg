@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aptos">
+  <circle cx="32" cy="32" r="30" fill="#111820"/>
+  <path d="M18 22h28M14 29h36M18 36h28M23 43h18" stroke="#d8f3f0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M17 22h6M41 22h6M14 29h7M43 29h7M18 36h6M40 36h6M23 43h5M36 43h5" stroke="#5de0d4" stroke-width="5" stroke-linecap="round"/>
+</svg>
