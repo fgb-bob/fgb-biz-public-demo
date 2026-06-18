@@ -8,4 +8,4 @@ Disallow: /sample
 Disallow: /mock
 Disallow: /debug
 
-Sitemap: https://fgb-bob.github.io/fgb-biz-public-demo/worldrealtime//sitemap.xml
+Sitemap: https://worldrealtime.com/sitemap.xml
