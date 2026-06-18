@@ -1,0 +1,11 @@
+User-Agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /dev
+Disallow: /test
+Disallow: /sample
+Disallow: /mock
+Disallow: /debug
+
+Sitemap: https://fgb-bob.github.io/fgb-biz-public-demo/worldrealtime//sitemap.xml

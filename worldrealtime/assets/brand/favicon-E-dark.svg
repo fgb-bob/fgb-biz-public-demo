@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="日経リアルタイム">
+  <title>日経リアルタイム</title>
+
+  
+  <rect x="8" y="10" width="6" height="44" fill="#ffb020" rx="1"></rect>
+
+  
+  <text x="38" y="50" text-anchor="middle" font-family="&#39;Noto Sans JP&#39;,&#39;Hiragino Sans&#39;,&#39;Hiragino Kaku Gothic ProN&#39;,&#39;Yu Gothic&#39;,&#39;Meiryo&#39;,sans-serif" font-size="46" font-weight="900" fill="#ffffff">日</text>
+</svg>

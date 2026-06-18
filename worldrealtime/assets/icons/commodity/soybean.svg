@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Soybeans">
+  <path d="M7 20c7-3 10-8 11-16" fill="none" stroke="#4f8f36" stroke-width="1.6" stroke-linecap="round"/>
+  <ellipse cx="8" cy="15" rx="4" ry="2.7" transform="rotate(-32 8 15)" fill="#c6a24d" stroke="#7b6222" stroke-width="1"/>
+  <ellipse cx="13" cy="11" rx="4" ry="2.7" transform="rotate(-32 13 11)" fill="#d4b361" stroke="#7b6222" stroke-width="1"/>
+  <ellipse cx="16" cy="7" rx="3.3" ry="2.3" transform="rotate(-32 16 7)" fill="#e0c375" stroke="#7b6222" stroke-width="1"/>
+</svg>

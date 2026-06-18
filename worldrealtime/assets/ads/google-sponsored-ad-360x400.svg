@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="400" viewBox="0 0 360 400" role="img" aria-labelledby="title desc">
+  <title id="title">Google style display advertisement</title>
+  <desc id="desc">A sponsored display advertisement for the nikkeirealtime right rail.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.58" stop-color="#f7fbff"/>
+      <stop offset="1" stop-color="#eaf2ff"/>
+    </linearGradient>
+    <linearGradient id="blueBand" x1="0" x2="1">
+      <stop offset="0" stop-color="#1a73e8"/>
+      <stop offset="0.52" stop-color="#3f8cff"/>
+      <stop offset="1" stop-color="#0b57d0"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f4f8ff"/>
+    </linearGradient>
+    <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#1a73e8" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#34a853" stop-opacity="0.04"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#174ea6" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .ui { font-family: Arial, Helvetica, sans-serif; letter-spacing: 0; }
+      .jp { font-family: "Yu Gothic", "Meiryo", Arial, sans-serif; letter-spacing: 0; }
+      .sweep { animation: sweep 5.8s ease-in-out infinite; }
+      .line {
+        stroke-dasharray: 360;
+        stroke-dashoffset: 720;
+        animation: draw 5.2s ease-in-out infinite;
+      }
+      .pulse { animation: pulse 1.9s ease-in-out infinite; transform-origin: 296px 235px; }
+      @keyframes sweep {
+        0%, 100% { transform: translateX(-34px); opacity: 0; }
+        45%, 58% { opacity: 0.52; }
+        80% { transform: translateX(250px); opacity: 0; }
+      }
+      @keyframes draw {
+        0% { stroke-dashoffset: 720; opacity: 0.64; }
+        45%, 72% { stroke-dashoffset: 360; opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 0.78; }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.35); opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sweep, .line, .pulse { animation: none; }
+      }
+    </style>
+  </defs>
+
+  <rect width="360" height="400" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="359" height="399" fill="none" stroke="#d9e3f3"/>
+  <rect x="0" y="0" width="360" height="5" fill="url(#blueBand)"/>
+  <path d="M238 -30h126L118 400H-8z" fill="#e8f0fe" opacity="0.72"/>
+  <path d="M301 -20h78L188 400h-70z" fill="#dce9ff" opacity="0.6"/>
+  <rect class="sweep" x="56" y="5" width="64" height="395" fill="#ffffff" opacity="0.36" transform="skewX(-24)"/>
+
+  <g transform="translate(24 22)">
+    <rect x="0" y="0" width="312" height="52" fill="#ffffff" stroke="#dbe6f5"/>
+    <g transform="translate(16 13)">
+      <circle cx="10" cy="10" r="10" fill="#4285f4"/>
+      <circle cx="25" cy="10" r="10" fill="#ea4335"/>
+      <circle cx="10" cy="25" r="10" fill="#fbbc04"/>
+      <circle cx="25" cy="25" r="10" fill="#34a853"/>
+      <rect x="10" y="10" width="15" height="15" fill="#ffffff"/>
+    </g>
+    <text x="62" y="20" fill="#5f6368" class="ui" font-size="9" font-weight="800">SPONSORED</text>
+    <text x="62" y="38" fill="#202124" class="ui" font-size="17" font-weight="800">Global Market Tools</text>
+    <rect x="256" y="14" width="36" height="22" rx="3" fill="#e8f0fe" stroke="#d2e3fc"/>
+    <text x="274" y="29" text-anchor="middle" fill="#1a73e8" class="ui" font-size="10" font-weight="800">AD</text>
+  </g>
+
+  <g transform="translate(24 104)" filter="url(#shadow)">
+    <rect x="0" y="0" width="312" height="92" rx="10" fill="url(#card)" stroke="#dbe6f5"/>
+    <text x="20" y="31" fill="#202124" class="jp" font-size="23" font-weight="800">世界市場を</text>
+    <text x="20" y="62" fill="#202124" class="jp" font-size="23" font-weight="800">スマートに確認</text>
+    <text x="180" y="35" fill="#1a73e8" class="ui" font-size="12" font-weight="800">LIVE</text>
+    <text x="180" y="58" fill="#5f6368" class="jp" font-size="11" font-weight="700">指数・為替・商品</text>
+    <text x="180" y="76" fill="#5f6368" class="jp" font-size="11" font-weight="700">一画面でチェック</text>
+  </g>
+
+  <g transform="translate(24 222)">
+    <rect x="0" y="0" width="312" height="80" rx="8" fill="#f8fbff" stroke="#dbe6f5"/>
+    <path d="M0 60h312M0 40h312M0 20h312M52 0v80M104 0v80M156 0v80M208 0v80M260 0v80" stroke="#d9e3f3" opacity="0.7"/>
+    <path d="M18 58L43 47L68 52L94 36L121 42L147 29L173 35L200 24L226 31L252 19L278 25L296 13V80H18z" fill="url(#chartFill)"/>
+    <path class="line" d="M18 58L43 47L68 52L94 36L121 42L147 29L173 35L200 24L226 31L252 19L278 25L296 13" fill="none" stroke="#1a73e8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle class="pulse" cx="296" cy="13" r="4.2" fill="#34a853"/>
+  </g>
+
+  <g transform="translate(24 326)">
+    <rect x="0" y="0" width="93" height="28" rx="6" fill="#ffffff" stroke="#dbe6f5"/>
+    <text x="46.5" y="12" text-anchor="middle" fill="#1a73e8" class="ui" font-size="10" font-weight="800">Realtime</text>
+    <text x="46.5" y="23" text-anchor="middle" fill="#5f6368" class="ui" font-size="8" font-weight="700">Market data</text>
+
+    <rect x="109" y="0" width="93" height="28" rx="6" fill="#ffffff" stroke="#dbe6f5"/>
+    <text x="155.5" y="12" text-anchor="middle" fill="#34a853" class="ui" font-size="10" font-weight="800">Global</text>
+    <text x="155.5" y="23" text-anchor="middle" fill="#5f6368" class="ui" font-size="8" font-weight="700">Stocks &amp; FX</text>
+
+    <rect x="218" y="0" width="93" height="28" rx="6" fill="#ffffff" stroke="#dbe6f5"/>
+    <text x="264.5" y="12" text-anchor="middle" fill="#ea4335" class="ui" font-size="10" font-weight="800">Fast</text>
+    <text x="264.5" y="23" text-anchor="middle" fill="#5f6368" class="ui" font-size="8" font-weight="700">One screen</text>
+  </g>
+
+  <g transform="translate(24 366)">
+    <rect x="0" y="0" width="132" height="24" rx="12" fill="#1a73e8"/>
+    <text x="66" y="16.5" text-anchor="middle" fill="#ffffff" class="jp" font-size="11.5" font-weight="800">詳しく見る</text>
+    <text x="148" y="16" fill="#5f6368" class="ui" font-size="9.5" font-weight="700">広告 / Sponsored</text>
+  </g>
+</svg>
