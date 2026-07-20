@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Aluminium">
-  <rect x="4" y="7" width="16" height="10" rx="2" fill="#aeb8c5" stroke="#e6edf5" stroke-width="1.2"/>
-  <path d="M6 10h12M6 14h12" stroke="#6f7c8c" stroke-width="1"/>
-  <text x="12" y="15" fill="#1d2730" font-family="Arial, sans-serif" font-size="6" font-weight="700" text-anchor="middle">Al</text>
-</svg>

@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Crypto">
-  <circle cx="32" cy="32" r="30" fill="#131a24"/>
-  <path d="M32 9l19 11v22L32 55 13 42V20L32 9z" fill="#1f2a3a" stroke="#6ea8ff" stroke-width="3"/>
-  <path d="M32 18l10 6v12l-10 7-10-7V24l10-6z" fill="#6ea8ff"/>
-  <path d="M32 18v25M22 24l20 12M42 24L22 36" stroke="#131a24" stroke-width="3" stroke-linecap="round"/>
-</svg>

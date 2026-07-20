@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Crypto 10 Index">
-  <circle cx="32" cy="32" r="30" fill="#131a24"/>
-  <path d="M32 9l19 11v22L32 55 13 42V20L32 9z" fill="#1f2a3a" stroke="#6ea8ff" stroke-width="3"/>
-  <text x="32" y="39" fill="#e8f1ff" font-family="Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle">10</text>
-  <path d="M22 23h20" stroke="#6ee7b7" stroke-width="3" stroke-linecap="round"/>
-</svg>
